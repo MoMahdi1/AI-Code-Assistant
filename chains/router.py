@@ -19,19 +19,19 @@ def invoke_router(question: str, code: str = ""):
 
     if task == "generation":
 
-        answer = invoke_generator(question)
-        return answer
+        answer, provider = invoke_generator(question)
+        return answer, provider
 
     elif task == "evaluation":
 
-        answer, _ = invoke_evaluator(question, code)
-        return answer
+        answer, provider = invoke_evaluator(question, code)
+        return answer, provider
 
     elif task == "explanation":
 
-        answer, _ = invoke_explainer(question)
-        return answer
+        answer, provider = invoke_explainer(question)
+        return answer, provider
 
     else:
 
-        return "Unknown task."
+        return "Unknown task.", provider

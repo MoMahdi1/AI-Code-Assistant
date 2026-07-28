@@ -12,3 +12,5 @@ pypdf
 langchain-openai
 tiktoken
 langchain-chroma
+fastapi 
+pydantic
