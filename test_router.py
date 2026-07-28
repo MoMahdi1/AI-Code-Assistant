@@ -1,14 +1,13 @@
-from vectorstore.retriever import load_retriever
-
-retriever = load_retriever()
+from chains.router import invoke_router
 
 question = input("Question: ")
 
-docs = retriever.invoke(question)
+code = ""
 
-print(f"Found {len(docs)} documents\n")
+if "review" in question.lower() or "evaluate" in question.lower():
+    print("Paste your code:")
+    code = input()
 
-for i, doc in enumerate(docs, 1):
-    print("=" * 60)
-    print(f"Document {i}")
-    print(doc.page_content[:500])
+response = invoke_router(question, code)
+
+print(response)
