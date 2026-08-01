@@ -1,56 +1,37 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
+import streamlit as st
 from chains.router import invoke_router
 
-app = FastAPI(
-    title="AI Code Assistant",
-    version="1.0.0"
+st.set_page_config(
+    page_title="AI Code Assistant",
+    page_icon="🤖",
+    layout="wide"
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+st.title("🤖 AI Code Assistant")
+
+question = st.text_area(
+    "Ask your programming question"
 )
 
-class ChatRequest(BaseModel):
-    question: str
-    code: str = ""
+code = st.text_area(
+    "Code (Optional)",
+    height=250
+)
 
+if st.button("Generate Response"):
 
-class ChatResponse(BaseModel):
-    provider: str
-    answer: str
+    if question.strip():
 
+        with st.spinner("Thinking..."):
 
-@app.get("/")
-def root():
-    return {
-        "message": "AI Code Assistant API is running 🚀"
-    }
+            answer, provider = invoke_router(
+                question=question,
+                code=code
+            )
 
+        st.success(f"Provider: {provider}")
 
-@app.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest):
+        st.markdown(answer)
 
-    try:
-
-        answer, provider = invoke_router(
-            question=request.question,
-            code=request.code
-        )
-
-        return ChatResponse(
-            provider=provider,
-            answer=answer
-        )
-
-    except Exception as e:
-
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+    else:
+        st.warning("Please enter a question.")
